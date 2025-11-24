@@ -6,7 +6,7 @@ export const equipoCtrl = {};
 equipoCtrl.addEquipo = async(req, res) => {
     try{
        const {nombre, grupo} = req.body;
-       const equipo = new Equipo({nombre,grupo});
+       const equipo = new Equipo({nombre,grupo, img: req.file ? req.file.filename : null});
        await equipo.save();
        if(grupo){
         await Grupo.findByIdAndUpdate(grupo,{
@@ -56,7 +56,12 @@ equipoCtrl.updateEquipo = async (req,res) => {
 equipoCtrl.getEquipos = async (req,res) => {
      try{
        const equipos = await Equipo.find().populate("grupo");
-       res.json(equipos);   
+       
+       const equiposConImg = equipos.map(e =>({ ...e._doc,
+        imagenUrl: e.img ? `${req.protocol}://${req.get('host')}/uploads/${e.img} ` : null
+       }));
+       
+       res.json(equiposConImg);   
     }catch(error){
         res.status(400).json({
             'status': '0',
