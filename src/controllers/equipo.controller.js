@@ -29,7 +29,15 @@ equipoCtrl.addEquipo = async(req, res) => {
 equipoCtrl.getEquipo = async (req,res) => {
      try{
        const equipo = await Equipo.findById(req.params.id).populate("grupo");
-       res.json(equipo);   
+           if (!equipo) {
+           return res.status(404).json({
+             status: "0",
+             msg: "Equipo no encontrado"
+           });   }
+           const equipoConImg = { ...equipo._doc, imagenUrl: equipo.img ? `${req.protocol}://${req.get('host')}/uploads/${equipo.img} ` : null }
+    
+           res.json(equipoConImg);   
+   
     }catch(error){
         res.status(400).json({
             'status': '0',

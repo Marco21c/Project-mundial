@@ -55,3 +55,19 @@ partidoCtrl.updatePartido = async (req,res) => {
   }
 }
 
+partidoCtrl.updateGolesDelPartido = async (req,res) => {
+  try{
+      const {golesA,golesB} = req.body;
+      const partido = await Partido.findByAndUpdate(req.params.id, {golesA,golesB},{new: true}).populate('equipoA').populate('equipoB');
+      
+      res.json({ 
+        'status': "1",
+        'msg': "Goles actualizados correctamente.",
+        partido
+      })
+  }catch(error){
+    res.status(400).json({
+      'status': '0',
+      'msg': 'Error al actualizar goles.'})
+  }
+}
